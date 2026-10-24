@@ -1,0 +1,10 @@
+{
+  "name": "engineering-principles",
+  "version": "0.2.0",
+  "description": "Steven's engineering preferences for explicitly adopted projects and tasks.",
+  "author": {
+    "name": "stevenlyd"
+  },
+  "repository": "https://github.com/stevenlyd/engineering-principles",
+  "skills": "./skills/"
+}

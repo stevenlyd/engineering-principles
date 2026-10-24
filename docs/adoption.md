@@ -9,7 +9,7 @@ Replace `FULL_COMMIT_SHA` with the verified 40-character commit for the chosen r
 ```markdown
 ## Engineering preferences
 
-This project adopts stevenlyd/engineering-principles v0.1.0 at FULL_COMMIT_SHA.
+This project adopts stevenlyd/engineering-principles v0.2.0 at FULL_COMMIT_SHA.
 Read the engineering-principles skill at .agents/skills/engineering-principles/SKILL.md
 and its bundled canonical reference for engineering decisions in this project.
 Verify that the installed payload matches the adopted source revision.
@@ -27,7 +27,7 @@ An exception records a concrete mismatch, not a permanent blanket waiver. For ex
 
 ## Releases
 
-`CHANGELOG.md` is the human-readable version authority. Use semantic versions for this instruction contract: a major version changes established requirements incompatibly, a minor version adds meaningful compatible guidance, and a patch clarifies or corrects without intentionally changing decisions. Pre-1.0 releases remain explicit opt-ins; review every update instead of assuming compatibility.
+`package.json` is the version authority; `CHANGELOG.md` records the human-readable changes. Use semantic versions for this instruction contract: a major version changes established requirements incompatibly, a minor version adds meaningful compatible guidance, and a patch clarifies or corrects without intentionally changing decisions. Pre-1.0 releases remain explicit opt-ins; review every update instead of assuming compatibility.
 
 Release tags use `vMAJOR.MINOR.PATCH` and must never be moved. Record the exact Git SHA in adopting projects. Installation and adoption revisions must agree; if the source is unavailable or mismatched, report that limit and do not claim the skill was verified or silently substitute current main. Complete active work under its recorded revision unless the user explicitly chooses an update. Keep global backlog items outside branch-local product contracts; this repository does not add a project-management dependency.
 
@@ -36,3 +36,13 @@ Release tags use `vMAJOR.MINOR.PATCH` and must never be moved. Record the exact 
 Before a release, run the available skill-creator `quick_validate.py` against `skills/engineering-principles`, check relative Markdown links and standalone payload completeness, review all principles and scope limits, and check for secrets and personal contact details. Commit the complete package and changelog, then create a new immutable tag. Verify remote visibility and branch/tag SHAs. If CI is added later, require terminal results for the exact release commit; do not represent unrun checks as passed.
 
 A new release does not upgrade installed copies, amend project adoption, or prove a host loaded it. Report source publication, installation, and runtime validation as separate facts.
+
+## Machine-readable adoption (optional, used by Duet)
+
+Put `.agents/principles.json` in the adopting project, with `schemaVersion: 1`, `repository` (HTTPS Git repository URL), `revision` (full commit SHA), `version` (release label), `skillPath` (`skills/engineering-principles`), and `skillDigest` (SHA-256 content identity). `AGENTS.md` points to this record and holds only local constraints/exceptions. Do not vendor the full principles.
+
+The digest follows Duet's existing directory identity convention: recursively list regular skill files as `[relative/path, sha256(file_bytes)]` pairs, sort by path using code-point order, serialize compact JSON, then SHA-256 that JSON. Reject symlinks. The adopting change must obtain this identity from the declared source revision, not from an arbitrary installed copy. The revision identifies policy provenance; matching content permits use of a native package with identical bytes, even if its delivery metadata differs.
+
+Use Duet's read-only `principles check --skill /actual/skill/directory` when available. It neither downloads nor executes the policy. A content mismatch is a blocker for applying that installed copy, not an automatic project upgrade. Fetch the declared source into a separate temporary checkout, verify its commit equals `revision`, and read the skill at `skillPath` plus its bundled references. Run the same check against it. If that source is unavailable, disclose the missing policy and continue only independent work. Do not edit managed plugin caches. Hosts without Duet follow the same verification with ordinary Git and file hashing; Duet is optional.
+
+Native auto-update is delivery policy, while this record is project policy. Updating one never updates the other. Finish an active task under its verified policy, activate host updates at a session boundary, and change adoption only in a reviewed commit. Rollback restores the prior adoption record and reads its pinned payload; it need not downgrade other projects' installed plugins.

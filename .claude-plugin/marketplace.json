@@ -1,0 +1,14 @@
+{
+  "name": "stevenlyd-engineering-principles",
+  "owner": {
+    "name": "stevenlyd"
+  },
+  "plugins": [
+    {
+      "name": "engineering-principles",
+      "version": "0.2.0",
+      "description": "Steven's engineering preferences for explicitly adopted projects and tasks.",
+      "source": "./"
+    }
+  ]
+}

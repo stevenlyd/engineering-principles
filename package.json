@@ -1,0 +1,15 @@
+{
+  "name": "@stevenlyd/engineering-principles",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Steven's engineering preferences for explicitly adopted projects and tasks.",
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/check.mjs"
+  },
+  "pi": {
+    "skills": [
+      "./skills"
+    ]
+  }
+}
