@@ -9,7 +9,7 @@ Replace `FULL_COMMIT_SHA` with the verified 40-character commit for the chosen r
 ```markdown
 ## Engineering preferences
 
-This project adopts stevenlyd/engineering-principles v0.2.0 at FULL_COMMIT_SHA.
+This project adopts stevenlyd/engineering-principles v0.3.0 at FULL_COMMIT_SHA.
 Read the engineering-principles skill at .agents/skills/engineering-principles/SKILL.md
 and its bundled canonical reference for engineering decisions in this project.
 Verify that the installed payload matches the adopted source revision.
