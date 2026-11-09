@@ -6,9 +6,11 @@ This is the canonical principles text. It describes personal engineering prefere
 
 Use a single source of truth for database and frontend state. Derive state whenever possible. Copies and caches are projections, not additional authorities. Justify denormalization with explicit ownership, update/invalidation, and rebuild rules; handle divergence deliberately.
 
-## 2. Derive TypeScript types
+## 2. Derive TypeScript types and names
 
 Any type that can be derived must be derived rather than manually redefined, even when that requires complex type gymnastics. Derive from schemas, functions, resources, and existing contracts so changes propagate mechanically. Upfront type infrastructure investment is intentional: reduce long-term complexity and drift. Encapsulate complex derivations behind meaningful names and usable APIs. Do not dilute this preference with a generic “avoid overengineering” escape hatch; document a concrete, explicitly accepted exception when a real constraint prevents derivation.
+
+Names and identifiers follow the same rule. When a name already exists in an authoritative source (a function or method, a schema key, a catalog entry), derive it from that source instead of restating it elsewhere. Only when nothing can be derived and a new set of literals must be defined, define it once as an `as const` object, whose entries can also carry per-entry data such as schemas or metadata, and derive the key and value types from it (`keyof typeof`). Do not use TypeScript `enum`, and do not maintain a parallel hand-written string union. Derive at the source and type level, not through runtime reflection such as `Function.name`, which bundling and minification do not preserve.
 
 ## 3. Deterministic facts before AI interpretation
 
