@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0 — 2026-11-11
+
+Principle 5 now chooses the frontend framework from the target platforms: when a native app ships alongside the web, use React Native for native and React for the web so both clients share one data layer and only views differ; Solid remains the preference for web-only products. Principles 4 and 8 no longer assume Solid: fine-grained reactivity applies where the chosen framework provides it, and Effect composes with whichever UI framework is chosen. Still 15 principles.
+
+Breaking changes: a project with both web and native clients now prefers React over Solid for the web. Projects pinned to 0.3.0 keep their policy until their adoption record is updated in a reviewed change. Migration: existing Solid web clients are not migrated automatically; a project that adopts 0.4.0 and has a native client should plan a separately authorized move of its web client to React.
+
 ## 0.3.0 — 2026-11-09
 
 Principle 2 now covers names as well as types: derive names and identifiers from their authoritative source (for example, event types from the methods that emit them); when a new literal set is unavoidable, define it once as an `as const` object and derive its types, never a TypeScript `enum` or a parallel string union, and never through runtime reflection such as `Function.name`. Still 15 principles.

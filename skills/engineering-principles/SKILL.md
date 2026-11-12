@@ -1,7 +1,7 @@
 ---
 name: engineering-principles
 metadata:
-  version: "0.3.0"
+  version: "0.4.0"
 description: Apply Steven's engineering preferences when explicitly requested or adopted by the current project's instructions, for architecture, implementation, review, and migration decisions. Installation alone does not adopt these preferences for unrelated projects.
 ---
 

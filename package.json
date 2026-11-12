@@ -1,6 +1,6 @@
 {
   "name": "@stevenlyd/engineering-principles",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Steven's engineering preferences for explicitly adopted projects and tasks.",
   "type": "module",

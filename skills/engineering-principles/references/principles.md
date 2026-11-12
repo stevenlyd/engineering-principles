@@ -18,11 +18,11 @@ Prefer deterministic types, schemas, references, and algorithms for facts that c
 
 ## 4. Responsive interfaces with honest state
 
-Prefer fine-grained reactivity and optimistic updates with explicit durability, rollback, and retry behavior. Load data, code, and media on demand. Use virtualization and pagination for long lists. Keep cached old data visible while refreshing; show a skeleton only when no data exists. Represent pending and failed work honestly instead of implying a durable save before acceptance.
+Prefer fine-grained reactivity where the framework chosen under principle 5 provides it; in React, keep subscriptions and state narrow so updates do not re-render broad trees. Prefer optimistic updates with explicit durability, rollback, and retry behavior. Load data, code, and media on demand. Use virtualization and pagination for long lists. Keep cached old data visible while refreshing; show a skeleton only when no data exists. Represent pending and failed work honestly instead of implying a durable save before acceptance.
 
-## 5. Solid and TanStack first
+## 5. Frontend framework follows the target platforms; TanStack first
 
-Prefer Solid for frontend development. For projects that warrant SSR, prefer TanStack Start with Solid, subject to verified compatibility for the project's actual versions. Prefer TanStack frontend libraries; choose others for unmet requirements. TanStack Query owns server-state caching and invalidation. Mutations should naturally update or invalidate typed resources. Avoid a second manual refresh or mirrored server-state system.
+Choose the UI framework from the platforms the product ships on. When a native app is built alongside the web, use React Native for native and React for the web, so both clients share one data layer (RPC client, query and mutation hooks, cache ownership, live sync and domain logic) and only the views differ. Do not pair a Solid web client with a React Native app: nothing above the framework-free layer can be shared, and every client feature is built twice. For web-only products, prefer Solid. For projects that warrant SSR, prefer TanStack Start with the chosen framework, subject to verified compatibility for the project's actual versions. Prefer TanStack frontend libraries; choose others for unmet requirements. TanStack Query owns server-state caching and invalidation. Mutations should naturally update or invalidate typed resources. Avoid a second manual refresh or mirrored server-state system.
 
 ## 6. Prefer typed RPC operation boundaries
 
@@ -34,7 +34,7 @@ Elysia and Hono are both acceptable; no backend framework is mandatory. Use clea
 
 ## 8. Effect across frontend and backend
 
-Use Effect.ts whenever feasible on both frontend and backend. It is not a backend-only preference. Compose Effect with Solid UI reactivity and TanStack Query cache ownership instead of duplicating their state. Coordinate retry policies, cancellation, and resource lifecycles across these layers. Verify the actual project's Effect version and APIs rather than assuming one.
+Use Effect.ts whenever feasible on both frontend and backend. It is not a backend-only preference. Compose Effect with the UI framework's reactivity and TanStack Query cache ownership instead of duplicating their state. Coordinate retry policies, cancellation, and resource lifecycles across these layers. Verify the actual project's Effect version and APIs rather than assuming one.
 
 ## 9. Move suitable work off the critical path
 
