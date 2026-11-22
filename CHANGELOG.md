@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0 — 2026-11-22
+
+Six new principles, 16 to 21: standards and established libraries before custom code; complexity answers a stated requirement; prove the riskiest assumption first; authority follows ownership and inputs are untrusted; know the cost and compute once close to the user; operable from the first user. Principles 1 to 15 keep their numbers. Principle 10 now says what to do when a Cloudflare product falls short (continue down principle 16's order). Principle 12 opens with a decision rule (lowest lifetime cost, alternatives named). Principle 13 defaults to expand-and-contract once real users exist. Principle 15 adds that tests must fail when the behaviour is removed, that flaky tests are defects, and that risky changes get independent review. The preamble groups the principles and marks 5, 7, 8, 10 and 11 as stack defaults. Now 21 principles.
+
+Breaking changes: none to existing numbers or exceptions. Projects pinned to 0.4.0 keep their policy until their adoption record is updated in a reviewed change. Migration: none required; adopted new work should record the principle 16 survey in its design or pull request.
+
 ## 0.4.0 — 2026-11-11
 
 Principle 5 now chooses the frontend framework from the target platforms: when a native app ships alongside the web, use React Native for native and React for the web so both clients share one data layer and only views differ; Solid remains the preference for web-only products. Principles 4 and 8 no longer assume Solid: fine-grained reactivity applies where the chosen framework provides it, and Effect composes with whichever UI framework is chosen. Still 15 principles.
