@@ -2,6 +2,8 @@
 
 This is the canonical principles text. It describes personal engineering preferences for explicitly adopted projects and tasks, not mandates for collaborators' unrelated work. Framework/provider selections are defaults subject to concrete project constraints. Correct state ownership, honest durability, security boundaries, preservation of user data, and truthful evidence are correctness requirements. Strong type derivation is an intentional engineering requirement within adopted scope; do not weaken it into generic advice to avoid complexity.
 
+Principles keep their numbers across releases. They fall into four groups: deciding what to build (16–18); design and correctness (1–4, 6, 9, 12, 19, 20); operating (13–15, 21); and stack defaults (5, 7, 8, 10, 11). Stack defaults are preferences: when one does not fit a stated requirement, apply principle 16 rather than writing custom code.
+
 ## 1. One authority for each fact
 
 Use a single source of truth for database and frontend state. Derive state whenever possible. Copies and caches are projections, not additional authorities. Justify denormalization with explicit ownership, update/invalidation, and rebuild rules; handle divergence deliberately.
@@ -42,7 +44,7 @@ Use queues and containers where appropriate for costly or noncritical asynchrono
 
 ## 10. Cloudflare first
 
-Prefer the Cloudflare ecosystem. Use another provider when it supplies a capability Cloudflare cannot meet for the project; state that unmet requirement. Neon PostgreSQL is one such option where relational needs require it. Evaluate actual capability and project constraints rather than choosing a provider by habit.
+Prefer the Cloudflare ecosystem. Use another provider when it supplies a capability Cloudflare cannot meet for the project; state that unmet requirement. Neon PostgreSQL is one such option where relational needs require it. Evaluate actual capability and project constraints rather than choosing a provider by habit. When a Cloudflare product does not meet a stated requirement, continue down principle 16's order (a standard, a maintained library, another service) before writing custom code.
 
 ## 11. SQLite-backed Durable Objects first
 
@@ -50,11 +52,11 @@ Prefer SQLite-backed Cloudflare Durable Objects for persistence. Colocate author
 
 ## 12. Optimize lifetime complexity and feedback
 
-Optimize lifecycle complexity, code quality, reuse, decoupling, and performance together. Measure feedback latency and actual bottlenecks. Prefer explicit stacks over naked recursion for graph and tree algorithms to make depth and control explicit; do not claim they are universally faster without evidence. Invest in reusable infrastructure when it reduces lifetime complexity, including the type infrastructure in principle 2.
+Choose the option with the lowest lifetime cost, and say which alternatives were compared. Lifetime cost includes maintenance, coupling, operations and the time to get feedback, not only the first implementation. Measure feedback latency and actual bottlenecks. Prefer explicit stacks over naked recursion for graph and tree algorithms to make depth and control explicit; do not claim they are universally faster without evidence. Invest in reusable infrastructure when it reduces lifetime complexity, including the type infrastructure in principle 2.
 
 ## 13. Complete migrations
 
-Finish migrations and remove obsolete compatibility paths. When data can migrate, do not sacrifice the completeness of the new system merely to preserve an old representation. An early-stage hard cutover can be reasonable with explicit scope and a suitable migration/recovery plan. This never implies permission to delete user data or impose blanket downtime on mature production systems. Existing architectures are not automatically migrated by installing this skill.
+Finish migrations and remove obsolete compatibility paths. When data can migrate, do not sacrifice the completeness of the new system merely to preserve an old representation. An early-stage hard cutover can be reasonable with explicit scope and a suitable migration/recovery plan. This never implies permission to delete user data or impose blanket downtime on mature production systems. Existing architectures are not automatically migrated by installing this skill. Once real users exist, default to expand-and-contract changes with no downtime; a stop-the-world cutover needs an announced window (principle 21).
 
 ## 14. Version product contracts and verify deployments
 
@@ -62,4 +64,35 @@ Versioned product definitions describe the commit-local contract, including acce
 
 ## 15. Verify meaningful behavior
 
-Use effective tests and evidence proportional to the change and its risk. Keep CI scoped and efficient, while covering affected contracts and relevant integration boundaries. Preserve approved behavior when hardening. Report what was actually run, on which revision, and any limits or failures. Never report fake passed verification or equate a generated file with a working deployment or installation.
+Use effective tests and evidence proportional to the change and its risk. Keep CI scoped and efficient, while covering affected contracts and relevant integration boundaries. Preserve approved behavior when hardening. Report what was actually run, on which revision, and any limits or failures. Never report fake passed verification or equate a generated file with a working deployment or installation. A test must fail when the behaviour it covers is removed; check this for new tests on risky paths. Treat a flaky test as a defect: find the cause instead of rerunning it or raising a timeout. Changes to authentication or authorization, destructive migrations, and anything that can lose data or delivery silently get a review independent of the author.
+
+## 16. Standards and established libraries before custom code
+
+Before designing any capability, look for what already solves it, in this order, and record the result in the design or pull request:
+
+1. An open standard or interface (for example OpenFeature for flags, OpenTelemetry for telemetry, WebAuthn for authentication, OAuth and OIDC for delegated access). Code against the standard so the implementation can change.
+2. A maintained library or engine that implements it, from any vendor or open source, not only the preferred platform.
+3. A managed service; Cloudflare first, per principle 10, when it meets the requirements.
+4. Custom code, only for what is specific to the product: integration, policy, data ownership and the product rules around it.
+
+A platform product that falls short is not a reason to write the whole thing: step down this list instead. Write a custom engine (a rule evaluator, a bucketing hash, a parser, cryptography, a sync or retry protocol) only when steps 1 to 3 cannot meet a stated requirement, and name that requirement. A brief that delegates work must ask for this survey explicitly and must never offer "the platform product or build it ourselves" as the only two options.
+
+## 17. Complexity answers a stated requirement
+
+Every mechanism in a design (a table, a state, a tier, a protocol, a trust rule) must answer a requirement someone has stated. Name that requirement in the design, and remove the mechanism when the requirement goes. Prefer the simplest design that meets the stated requirements, and compare it with at least one simpler alternative before building. When a feature is only safe with an elaborate trust or moderation model, first ask whether the feature is worth having. This does not weaken principle 2: type derivation and the reusable infrastructure in principle 12 are stated requirements of adopted scope.
+
+## 18. Prove the riskiest assumption first
+
+Before building a feature in full, write down the assumption that would make the work worthless if it were wrong: a visual effect looks right, a library runs on the target runtime, native code compiles, a platform API behaves as documented, other users can be trusted with a write. Test that assumption with the cheapest experiment that can fail (a prototype on the real device, a spike on the real runtime, a query against real data) and build the rest only after it holds. Report the experiment and its result as evidence under principle 15.
+
+## 19. Authority follows ownership; inputs are untrusted
+
+Permission to change something comes from owning that resource (the item, the account, the tenant), never from sharing an attribute with it such as identical content, a copy or a link. Check authority at the write, in the same transaction as the change. Treat every client, device report and third-party page as untrusted: validate on the server what a client claims, and limit what a claim can affect to the claimant's own data unless the server observed the fact itself. A design that lets anyone other than the owner write shared state needs a written abuse analysis before it is built. Keep credentials and sessions out of reach of embedded or third-party content.
+
+## 20. Know the cost; compute once, close to the user
+
+Before adopting a metered service, find its price per call and what drives the number of calls; prefer designs whose cost does not grow with views. When quality is equal, compute on the user's device or at the edge at no marginal cost rather than on a paid service. Compute a derived artefact once, store the result and serve it; do not recompute it per view or per viewer. Cap what remains metered, and alert before the cap.
+
+## 21. Operable from the first user
+
+Before real users arrive, a system has logs and error reports that reach a person, alerts on the failures that matter, a rollback path that has been rehearsed, backups whose restore has been tested, and a kill switch for each risky feature. Use the platform's tools and open standards for these (principle 16) rather than building dashboards. After launch, releases default to no downtime: additive schema changes first, code that tolerates both shapes, removal later. Old clients keep working or are told to update.

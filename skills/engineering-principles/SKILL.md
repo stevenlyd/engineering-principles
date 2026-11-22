@@ -1,7 +1,7 @@
 ---
 name: engineering-principles
 metadata:
-  version: "0.4.0"
+  version: "0.5.0"
 description: Apply Steven's engineering preferences when explicitly requested or adopted by the current project's instructions, for architecture, implementation, review, and migration decisions. Installation alone does not adopt these preferences for unrelated projects.
 ---
 
@@ -14,5 +14,7 @@ Check the project's adoption declaration (`.agents/principles.json` when present
 Separate architectural preferences from correctness invariants. Project constraints and explicit task instructions can override preferences; surface material tradeoffs and record authorized exceptions in the project, not in this canonical skill. Preserve the strong requirement to derive any derivable TypeScript type or name: complexity alone is not a reason to redefine it manually, and a literal set that must be defined is an `as const` object rather than an `enum`. An exception must be explicit, not an implicit appeal to simplicity.
 
 Use the principles to choose or review the smallest complete change that meets the task. Identify relevant state ownership, type derivation, durability, and verification boundaries. Report material exceptions and actual evidence; do not manufacture passed checks. Installing or invoking this skill does not authorize migrations, deletion, deployment, collaborator access, or changes to other projects.
+
+Before designing a capability, apply principle 16: look for an open standard, then a maintained library, then a managed service, and write custom code only for what is specific to the product.
 
 The repository's project adoption and version instructions are maintainer documentation; the installed skill remains self-contained through the reference above. No dependency on Duet, Suo, a specific Effect version, or a particular RPC library is required.
